@@ -1,0 +1,9 @@
+//Display the results based on grouping by employement_status and aggreating the perosnal activity column, 
+//aggregating work_time, aggregating leisure time
+display(activity_sum_file.withColumn("employement_Status",when(col("telfs") < 3,"employed").otherwise("unemployed")).select($"employement_Status",$"tucaseid",personal_activities.reduce(_+_) as "time_on_personal_activities",
+           work_activities.reduce(_+_) as "time_on_work_activities",
+           leisure_activities.reduce(_+_) as "time_on_leisure_activities")
+           .groupBy($"employement_Status").agg(sum($"time_on_personal_activities") as "personal_activities_time",
+           sum($"time_on_work_activities") as "work_time", sum($"time_on_leisure_activities") as "leisure_time"))
+                                
+    
