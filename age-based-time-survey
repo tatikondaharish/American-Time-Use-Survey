@@ -1,0 +1,10 @@
+//Display the results based on grouping by age and aggreating the perosnal activity column, 
+//aggregating work_time, aggregating leisure time
+display(activity_sum_file.withColumn("age_status",when(col("teage")<22,"young poeple").otherwise(col("teage"))).
+        withColumn("age_status",when(col("age_status").between(22,55),"active people").otherwise(col("age_status"))).
+        withColumn("age_status",when(col("age_status")>55,"elder people").otherwise(col("age_status"))).
+        select($"age_status",personal_activities.reduce(_+_) as "time_on_personal_activities",
+           work_activities.reduce(_+_) as "time_on_work_activities",
+           leisure_activities.reduce(_+_) as "time_on_leisure_activities").
+           groupBy($"age_status").agg(sum($"time_on_personal_activities") as "personal_activities_time",
+           sum($"time_on_work_activities") as "work_time", sum($"time_on_leisure_activities") as "leisure_time"))
